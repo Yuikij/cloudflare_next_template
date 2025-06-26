@@ -5,7 +5,9 @@ import { useState } from "react";
 
 export default function Home() {
   const [response, setResponse] = useState<string>('')
+  const [dbResponse, setDbResponse] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
+  const [dbLoading, setDbLoading] = useState<boolean>(false)
 
   const testAPI = async () => {
     setLoading(true)
@@ -17,6 +19,30 @@ export default function Home() {
       setResponse(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const queryTables = async () => {
+    setDbLoading(true)
+    try {
+      const res = await fetch('/api/tables')
+      const data = await res.json() as { 
+        success: boolean; 
+        tables?: string[]; 
+        count?: number; 
+        error?: string; 
+        timestamp: string 
+      }
+      
+      if (data.success && data.tables) {
+        setDbResponse(`数据库表查询成功!\n表数量: ${data.count}\n表名列表:\n${data.tables.map((table, index) => `${index + 1}. ${table}`).join('\n')}\n\n查询时间: ${data.timestamp}`)
+      } else {
+        setDbResponse(`数据库查询失败: ${data.error}\n时间: ${data.timestamp}`)
+      }
+    } catch (error) {
+      setDbResponse(`连接错误: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    } finally {
+      setDbLoading(false)
     }
   }
 
@@ -53,9 +79,25 @@ export default function Home() {
             {loading ? 'Testing...' : 'Test Hello API'}
           </button>
           
+          <button
+            onClick={queryTables}
+            disabled={dbLoading}
+            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-green-600 text-white gap-2 hover:bg-green-700 disabled:bg-green-400 font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full"
+          >
+            {dbLoading ? '查询中...' : '查询数据库表名'}
+          </button>
+          
           {response && (
             <div className="w-full p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
+              <h3 className="text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">API 测试结果:</h3>
               <pre className="text-sm font-mono break-all whitespace-pre-wrap">{response}</pre>
+            </div>
+          )}
+
+          {dbResponse && (
+            <div className="w-full p-4 bg-green-50 dark:bg-green-900 rounded-lg border border-green-200 dark:border-green-700">
+              <h3 className="text-sm font-medium mb-2 text-green-700 dark:text-green-300">数据库查询结果:</h3>
+              <pre className="text-sm font-mono break-all whitespace-pre-wrap text-green-800 dark:text-green-200">{dbResponse}</pre>
             </div>
           )}
         </div>
