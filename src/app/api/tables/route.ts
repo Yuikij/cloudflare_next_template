@@ -1,5 +1,5 @@
 import {  NextResponse } from 'next/server';
-import { getTablesWithRawSQL } from '../../lib/db';
+import { getTablesWithRawSQL } from '../../lib/db-pg';
 
 export async function GET() {
   try {

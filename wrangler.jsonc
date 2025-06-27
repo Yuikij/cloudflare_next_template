@@ -25,6 +25,14 @@
 		  "localConnectionString": "postgresql://postgres.beaimtshfibnwofzlwju:863127@Soukon@aws-0-ap-northeast-1.pooler.supabase.com:5432/postgres"
 		}
 	  ],
+
+	"d1_databases": [
+	{
+		"binding": "d1",
+		"database_name": "d1",
+		"database_id": "5fedafcf-ec8a-4286-af1d-d5e03494b339"
+	}
+	],
 	/**
 	 * Smart Placement
 	 * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
